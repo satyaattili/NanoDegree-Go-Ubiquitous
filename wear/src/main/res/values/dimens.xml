@@ -9,6 +9,7 @@
     <dimen name="digital_temp_text_size_round">27dp</dimen>
 
     <dimen name="digital_time_y_offset">90dp</dimen>
+    <dimen name="digital_time_y_offset_round">100dp</dimen>
     <dimen name="digital_date_y_offset">110dp</dimen>
     <dimen name="digital_date_y_offset_round">120dp</dimen>
     <dimen name="digital_divider_y_offset">125dp</dimen>

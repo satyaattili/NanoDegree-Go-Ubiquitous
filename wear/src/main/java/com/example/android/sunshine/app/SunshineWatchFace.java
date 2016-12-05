@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -118,6 +119,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
     final Handler mUpdateTimeHandler = new EngineHandler(this);
     boolean mRegisteredTimeZoneReceiver = false;
     Paint mBackgroundPaint;
+    Bitmap mBackgroundBitmap;
     Paint mTimePaint;
     Bitmap mWeatherIcon;
     boolean mAmbient;
@@ -135,7 +137,6 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
     float mTimeYOffset;
     float mDateYOffset;
-    float mDividerYOffset;
     float mWeatherYOffset;
 
 
@@ -256,10 +257,15 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
       Resources resources = SunshineWatchFace.this.getResources();
       boolean isRound = insets.isRound();
 
+      mTimeYOffset = resources.getDimension(isRound
+          ? R.dimen.digital_time_y_offset_round : R.dimen.digital_time_y_offset);
+
       mDateYOffset = resources.getDimension(isRound
           ? R.dimen.digital_date_y_offset_round : R.dimen.digital_date_y_offset);
-      mDividerYOffset = resources.getDimension(isRound
-          ? R.dimen.digital_divider_y_offset_round : R.dimen.digital_divider_y_offset);
+
+      mDateYOffset = resources.getDimension(isRound
+          ? R.dimen.digital_date_y_offset_round : R.dimen.digital_date_y_offset);
+
       mWeatherYOffset = resources.getDimension(isRound
           ? R.dimen.digital_weather_y_offset_round : R.dimen.digital_weather_y_offset);
 
@@ -316,6 +322,12 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         canvas.drawColor(Color.BLACK);
       } else {
         canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
+        if(mBackgroundBitmap != null){
+          Paint alphaPaint = new Paint();
+          alphaPaint.setAlpha(80);
+          canvas.drawBitmap(mBackgroundBitmap, 0, 0, alphaPaint);
+        }
+
       }
 
       // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
@@ -370,7 +382,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
       // Draw the date
       String dayOfWeekString   = Helper.getDayOfWeekString(resources, mCalendar.get(Calendar
           .DAY_OF_WEEK));
-      String monthOfYearString = Helper.getMonthOfYearString(resources, mCalendar.get(Calendar
+      String monthOfYearString = Helper.getMonth(resources, mCalendar.get(Calendar
           .MONTH));
 
       int dayOfMonth = mCalendar.get(Calendar.DAY_OF_MONTH);
@@ -382,8 +394,6 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
       // Draw high and low temp if we have it
       if (mWeatherHigh != null && mWeatherLow != null && mWeatherIcon != null) {
-        // Draw a line to separate date and time from weather elements
-        canvas.drawLine(bounds.centerX() - 20, mDividerYOffset, bounds.centerX() + 20, mDividerYOffset, datePaint);
 
         float highTextLen = mTempHighPaint.measureText(mWeatherHigh);
 
@@ -400,6 +410,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
               mTempLowPaint);
           float iconXOffset = bounds.centerX() - ((highTextLen / 2) + mWeatherIcon.getWidth() + 30);
           canvas.drawBitmap(mWeatherIcon, iconXOffset, mWeatherYOffset - mWeatherIcon.getHeight(), null);
+
         }
       }
     }
@@ -481,6 +492,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
               Drawable b = getResources().getDrawable(Helper.getIconResourceForWeatherCondition
                   (weatherId));
               Bitmap icon = ((BitmapDrawable) b).getBitmap();
+              mBackgroundBitmap = BitmapFactory.decodeResource(getResources(), Helper.getBackgroundResourceForWeatherCondition(weatherId));
+
               float scaledWidth =
                   (mTempHighPaint.getTextSize() / icon.getHeight()) * icon.getWidth();
               mWeatherIcon = Bitmap.createScaledBitmap(icon, (int) scaledWidth,

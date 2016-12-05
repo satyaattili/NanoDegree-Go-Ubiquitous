@@ -13,15 +13,9 @@ import in.mobileappdev.wear.R;
 
 public class Helper {
 
-  /**
-   * Helper method to provide the icon resource id according to the weather condition id returned
-   * by the OpenWeatherMap call.
-   * @param weatherId from OpenWeatherMap API response
-   * @return resource id for the corresponding icon. -1 if no relation is found.
-   */
+
   public static int getIconResourceForWeatherCondition(int weatherId) {
-    // Based on weather code data found at:
-    // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+
     if (weatherId >= 200 && weatherId <= 232) {
       return R.drawable.ic_storm;
     } else if (weatherId >= 300 && weatherId <= 321) {
@@ -48,8 +42,34 @@ public class Helper {
     return -1;
   }
 
+  public static int getBackgroundResourceForWeatherCondition(int weatherId) {
+
+    if (weatherId >= 200 && weatherId <= 232) {
+      return R.drawable.strom;
+    } else if (weatherId >= 300 && weatherId <= 321) {
+      return R.drawable.rainy;
+    } else if (weatherId >= 500 && weatherId <= 504) {
+      return R.drawable.rainy;
+    } else if (weatherId == 511) {
+      return R.drawable.snow;
+    } else if (weatherId >= 520 && weatherId <= 531) {
+      return R.drawable.rainy;
+    } else if (weatherId >= 600 && weatherId <= 622) {
+      return R.drawable.snow;
+    } else if (weatherId >= 701 && weatherId <= 761) {
+      return R.drawable.snowfall;
+    } else if (weatherId == 761 || weatherId == 781) {
+      return R.drawable.strom;
+    } else if (weatherId == 800) {
+      return R.drawable.clear;
+    } else if (weatherId >= 801 && weatherId <= 804) {
+      return R.drawable.cloudy;
+    }
+    return -1;
+  }
+
   @NonNull
-  public static String getMonthOfYearString(Resources resources, int monthOfYear) {
+  public static String getMonth(Resources resources, int monthOfYear) {
     int monthOfYearString;
     switch(monthOfYear) {
       case Calendar.JANUARY:
