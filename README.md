@@ -12,3 +12,4 @@ wear : This module contains logic to draw watch face and updating the weather fr
 
 common : This is helper module contaions the common variable/logic between wear and sunshine modules.
 
+![ScreenShot](https://raw.github.com/satyaattili/NanoDegree-Go-Ubiquitous/master/screen.png)
