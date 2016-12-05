@@ -12,8 +12,9 @@
     <dimen name="digital_time_y_offset_round">100dp</dimen>
     <dimen name="digital_date_y_offset">110dp</dimen>
     <dimen name="digital_date_y_offset_round">120dp</dimen>
-    <dimen name="digital_divider_y_offset">125dp</dimen>
     <dimen name="digital_divider_y_offset_round">135dp</dimen>
     <dimen name="digital_weather_y_offset">160dp</dimen>
     <dimen name="digital_weather_y_offset_round">170dp</dimen>
+    <dimen name="digital_weather_icon_y_offset">170dp</dimen>
+    <dimen name="digital_weather_icon_y_offset_round">180dp</dimen>
 </resources>

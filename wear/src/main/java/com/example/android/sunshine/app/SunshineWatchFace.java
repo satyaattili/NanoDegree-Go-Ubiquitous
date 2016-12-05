@@ -138,6 +138,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
     float mTimeYOffset;
     float mDateYOffset;
     float mWeatherYOffset;
+    float mWeatherIconYOffset;
 
 
     final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
@@ -263,11 +264,11 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
       mDateYOffset = resources.getDimension(isRound
           ? R.dimen.digital_date_y_offset_round : R.dimen.digital_date_y_offset);
 
-      mDateYOffset = resources.getDimension(isRound
-          ? R.dimen.digital_date_y_offset_round : R.dimen.digital_date_y_offset);
-
       mWeatherYOffset = resources.getDimension(isRound
           ? R.dimen.digital_weather_y_offset_round : R.dimen.digital_weather_y_offset);
+
+      mWeatherIconYOffset = resources.getDimension(isRound
+          ? R.dimen.digital_weather_icon_y_offset_round : R.dimen.digital_weather_icon_y_offset);
 
       float timeTextSize = resources.getDimension(isRound
           ? R.dimen.digital_time_text_size_round : R.dimen.digital_time_text_size);
@@ -396,20 +397,19 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
       if (mWeatherHigh != null && mWeatherLow != null && mWeatherIcon != null) {
 
         float highTextLen = mTempHighPaint.measureText(mWeatherHigh);
-
+        float lowTextLen = mTempLowAmbientPaint.measureText(mWeatherLow);
+        float xOffset = bounds.centerX() - ((highTextLen + lowTextLen + 20) / 2);
         if (mAmbient) {
-          float lowTextLen = mTempLowAmbientPaint.measureText(mWeatherLow);
-          float xOffset = bounds.centerX() - ((highTextLen + lowTextLen + 20) / 2);
           canvas.drawText(mWeatherHigh, xOffset, mWeatherYOffset, mTempHighPaint);
           canvas.drawText(mWeatherLow, xOffset + highTextLen + 20, mWeatherYOffset,
               mTempLowAmbientPaint);
         } else {
-          float xOffset = bounds.centerX() - (highTextLen / 2);
           canvas.drawText(mWeatherHigh, xOffset, mWeatherYOffset, mTempHighPaint);
-          canvas.drawText(mWeatherLow, bounds.centerX() + (highTextLen / 2) + 20, mWeatherYOffset,
-              mTempLowPaint);
-          float iconXOffset = bounds.centerX() - ((highTextLen / 2) + mWeatherIcon.getWidth() + 30);
-          canvas.drawBitmap(mWeatherIcon, iconXOffset, mWeatherYOffset - mWeatherIcon.getHeight(), null);
+          canvas.drawText(mWeatherLow, xOffset + highTextLen + 20 , mWeatherYOffset, mTempLowPaint);
+          float iconXOffset = bounds.centerX();
+          canvas.drawBitmap(mWeatherIcon, iconXOffset - mWeatherIcon.getHeight()/2,
+              mWeatherIconYOffset ,
+              null);
 
         }
       }
@@ -509,8 +509,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         }
         }
     }
-    public void requestWeatherInfo() {
-      //https://github.com/alexdennis/udacity-android-go-ubiquitous/blob/master/watchface/src/main/java/com/example/android/sunshine/app/SunshineWatchFaceService.java
+
+    private void requestWeatherInfo() {
       PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(CommonConstants.PATH_WEATHER);
       putDataMapRequest.getDataMap().putString(CommonConstants.KEY_UUID, UUID.randomUUID()
           .toString());
@@ -521,9 +521,9 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             @Override
             public void onResult(DataApi.DataItemResult dataItemResult) {
               if (!dataItemResult.getStatus().isSuccess()) {
-                Log.d(TAG, "Failed asking phone for weather data");
+                Log.d(TAG, "Failed to get wearable data");
               } else {
-                Log.d(TAG, "Successfully asked for weather data");
+                Log.d(TAG, "Success to get wearable data");
               }
             }
           });
